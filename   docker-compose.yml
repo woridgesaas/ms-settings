@@ -25,3 +25,6 @@ services:
 
     # Redémarre automatiquement le container sauf arrêt manuel
     restart: unless-stopped
+networks:
+  woridge-external-network:
+    external: true
