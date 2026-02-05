@@ -1,0 +1,27 @@
+version: "3.9"   # Version du format docker-compose
+
+services:
+  # =========================
+  # Micro-service Settings
+  # =========================
+  ms-settings:
+    container_name: ms-settings     # Nom du container (lisible dans Docker Desktop)
+
+    # Construction de l’image Docker
+    build:
+      context: .                    # Dossier racine du projet (pom.xml + src)
+      dockerfile: infra/Dockerfile  # Chemin vers le Dockerfile
+
+    image: ms-settings:latest       # Nom de l’image générée
+
+    # Mapping des ports
+    # 8080 (machine) → 8080 (container)
+    ports:
+      - "8080:8080"
+
+    # Variables d’environnement passées à Spring Boot
+    environment:
+      SPRING_PROFILES_ACTIVE: docker   # Active le profil Spring "docker"
+
+    # Redémarre automatiquement le container sauf arrêt manuel
+    restart: unless-stopped
