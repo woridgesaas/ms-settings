@@ -29,10 +29,10 @@ WORKDIR /app
 
 # Copier uniquement le JAR généré depuis l’étape build
 # Cela permet d’avoir une image finale légère et sécurisée
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/target/*.jar ms-settings.jar
 
 # Exposer le port utilisé par l’application Spring Boot
 EXPOSE 8080
 
 # Commande exécutée au démarrage du conteneur
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "ms-settings.jar"]
