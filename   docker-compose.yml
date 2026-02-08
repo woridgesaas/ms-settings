@@ -1,30 +1,71 @@
-version: "3.9"   # Version du format docker-compose
+version: "3.9"
 
 services:
+  # =========================
+  # Base de données PostgreSQL
+  # =========================
+  db-settings:
+    image: postgres:16
+    container_name: db-settings
+
+    environment:
+      POSTGRES_DB: settings_db
+      POSTGRES_USER: settings_user
+
+    ports:
+      - "5439:5432"   # optionnel
+
+    volumes:
+      - settings-db-data:/var/lib/postgresql/data
+
+    restart: unless-stopped
+
+    networks:
+      - woridge-external-network
+
+
   # =========================
   # Micro-service Settings
   # =========================
   ms-settings:
-    container_name: woridge-ms-settings     # Nom du container (lisible dans Docker Desktop)
+    container_name: woridge-ms-settings
 
-    # Construction de l’image Docker
     build:
-      context: .                    # Dossier racine du projet (pom.xml + src)
-      dockerfile: infra/Dockerfile  # Chemin vers le Dockerfile
+      context: .
+      dockerfile: infra/Dockerfile
 
-    image: ms-settings:latest       # Nom de l’image générée
+    image: ms-settings:latest
 
-    # Mapping des ports
-    # 8088 (machine) → 8080 (container)
     ports:
       - "8088:8080"
 
-    # Variables d’environnement passées à Spring Boot
     environment:
-      SPRING_PROFILES_ACTIVE: docker   # Active le profil Spring "docker"
+      SPRING_PROFILES_ACTIVE: docker
 
-    # Redémarre automatiquement le container sauf arrêt manuel
+      # 🔗 Connexion DB
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-settings:5432/settings_db
+      SPRING_DATASOURCE_USERNAME: settings_user
+      SPRING_DATASOURCE_PASSWORD: settings_pass
+
+    depends_on:
+      - db-settings
+
     restart: unless-stopped
+
+    networks:
+      - woridge-external-network
+
+
+# =========================
+# Volumes
+# =========================
+volumes:
+  settings-db-data:
+
+
+# =========================
+# Networks
+# =========================
 networks:
   woridge-external-network:
     external: true
