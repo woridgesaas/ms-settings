@@ -1,3 +1,13 @@
 spring:
   application:
     name: settings-management
+  profiles:
+    active: ${ACTIVE_PROFILE}
+
+server:
+  port: 8088
+  servlet:
+    context-path: /api/settings
+
+internal:
+  secret-key: ${INTERNAL_SECRET_KEY}
