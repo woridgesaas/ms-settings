@@ -1,6 +1,11 @@
 spring:
   application:
     name: settings-management
+  flyway:
+    validate-on-migrate: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
   profiles:
     active: ${ACTIVE_PROFILE}
 
