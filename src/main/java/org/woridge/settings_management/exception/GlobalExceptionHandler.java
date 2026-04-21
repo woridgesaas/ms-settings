@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.woridge.settings_management.dto.ErrorResponse;
 import org.woridge.settings_management.enumeration.ErrorCode;
+import org.woridge.settings_management.exception.annual_leave.AnnualBalanceNotFoundException;
+import org.woridge.settings_management.exception.exceptional_leave.ExceptionalLeaveNotFoundException;
+import org.woridge.settings_management.exception.exceptional_leave.GrantedDaysLessThanLegalBalanceException;
 import org.woridge.settings_management.exception.request.MissingCinInRequestHeaderException;
 import org.woridge.settings_management.exception.request.MissingRoleInRequestHeaderException;
 import org.woridge.settings_management.exception.request.MissingSubdomainInRequestHeaderException;
@@ -18,6 +21,47 @@ import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    // Annual leave exceptions
+    @ExceptionHandler(AnnualBalanceNotFoundException.class)
+    public ResponseEntity<ErrorResponse<String>> handleAnnualBalanceNotFoundException(AnnualBalanceNotFoundException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.ANNUAL_BALANCE_NOT_FOUND
+                        )
+                );
+    }
+
+    // Exceptional leave exceptions
+    @ExceptionHandler(ExceptionalLeaveNotFoundException.class)
+    public ResponseEntity<ErrorResponse<String>> handleExceptionalLeaveNotFoundException(ExceptionalLeaveNotFoundException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.EXCEPTIONAL_LEAVE_NOT_FOUND
+                        )
+                );
+    }
+
+    @ExceptionHandler(GrantedDaysLessThanLegalBalanceException.class)
+    public ResponseEntity<ErrorResponse<String>> handleGrantedDaysLessThanLegalBalanceException(GrantedDaysLessThanLegalBalanceException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.GRANTED_DAYS_LESS_THAN_LEGAL_BALANCE
+                        )
+                );
+    }
 
     // Request exceptions
     @ExceptionHandler(MissingCinInRequestHeaderException.class)
