@@ -10,6 +10,7 @@ public class AnnualLeaveValidatorImpl implements AnnualLeaveValidator {
 
     @Override
     public boolean isAnnualLeaveUnchanged(AnnualLeave currentAnnualLeave, ConfigureAnnualBalanceRequest configureAnnualBalanceRequest) {
+
         return currentAnnualLeave.getBalance() == configureAnnualBalanceRequest.balance();
     }
 }

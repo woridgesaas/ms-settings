@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.woridge.settings_management.dto.exceptional_leave.*;
-import org.woridge.settings_management.exception.exceptional_leave.ExceptionalLeaveNotFoundException;
+import org.woridge.settings_management.exception.exceptional_leave.ExceptionalLeaveNotConfiguredException;
 import org.woridge.settings_management.mapper.ExceptionalLeaveMapper;
 import org.woridge.settings_management.model.ExceptionalLeave;
 import org.woridge.settings_management.repository.ExceptionalLeaveRepository;
@@ -27,14 +27,14 @@ public class ExceptionalLeaveServiceImpl implements ExceptionalLeaveService {
         for (UpdateExceptionalLeaveItem updateExceptionalLeaveItem : updateExceptionalLeavesRequest.exceptionalLeaves()) {
 
             ExceptionalLeave currentExceptionalLeave = exceptionalLeaveRepository.findById(updateExceptionalLeaveItem.id()).orElseThrow(() ->
-                    new ExceptionalLeaveNotFoundException("Exceptional leave with id : " + updateExceptionalLeaveItem.id() + " not found"));
+                    new ExceptionalLeaveNotConfiguredException("Exceptional leave with id : " + updateExceptionalLeaveItem.id() + " not configured"));
 
             if (exceptionalLeaveValidator.isExceptionalLeaveUnchanged(currentExceptionalLeave, updateExceptionalLeaveItem)) {
 
                 continue;
             }
 
-            exceptionalLeaveValidator.validateGrantedDaysGreaterThanLegalBalance(
+            exceptionalLeaveValidator.validateGrantedDaysGreaterThanOrEqualLegalBalance(
                     updateExceptionalLeaveItem.grantedDays(),
                     currentExceptionalLeave.getLegalBalance()
             );

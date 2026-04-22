@@ -10,7 +10,7 @@ import org.woridge.settings_management.service.ExceptionalLeaveValidator;
 public class ExceptionalLeaveValidatorImpl implements ExceptionalLeaveValidator {
 
     @Override
-    public void validateGrantedDaysGreaterThanLegalBalance(int grantedDays, int legalBalance) {
+    public void validateGrantedDaysGreaterThanOrEqualLegalBalance(int grantedDays, int legalBalance) {
 
         if (grantedDays < legalBalance) {
 

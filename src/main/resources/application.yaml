@@ -16,3 +16,7 @@ server:
 
 internal:
   secret-key: ${INTERNAL_SECRET_KEY}
+
+work-schedule:
+  min-daily-hours: 1
+  max-daily-hours: 12

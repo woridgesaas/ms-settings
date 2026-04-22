@@ -5,7 +5,7 @@ import org.woridge.settings_management.model.ExceptionalLeave;
 
 public interface ExceptionalLeaveValidator {
 
-    void validateGrantedDaysGreaterThanLegalBalance(int grantedDays, int legalBalance);
+    void validateGrantedDaysGreaterThanOrEqualLegalBalance(int grantedDays, int legalBalance);
 
     boolean isExceptionalLeaveUnchanged(ExceptionalLeave currentExceptionalLeave, UpdateExceptionalLeaveItem updateExceptionalLeaveItem);
 }
