@@ -1,0 +1,9 @@
+package org.woridge.settings_management.service;
+
+import org.woridge.settings_management.dto.absence_justification.ConfigureAbsenceJustificationRequest;
+import org.woridge.settings_management.model.AbsenceJustification;
+
+public interface AbsenceJustificationValidator {
+
+    boolean isAbsenceJustificationUnchanged(AbsenceJustification currentAbsenceJustification, ConfigureAbsenceJustificationRequest configureAbsenceJustificationRequest);
+}

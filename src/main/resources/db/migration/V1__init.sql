@@ -22,7 +22,7 @@ CREATE TABLE exceptional_leaves
 CREATE TABLE work_schedules
 (
     id          UUID PRIMARY KEY,
-    type        VARCHAR(50) NOT NULL CHECK (type IN ('FIXED_HOURS', 'HOURS_TO_COMPLETE')),
+    type        VARCHAR(50) NOT NULL CHECK (type IN ('FIXED_HOURS', 'FLEXIBLE_HOURS')),
     entry_time  TIME,
     exit_time   TIME,
     daily_hours DECIMAL(4, 2),
@@ -33,10 +33,10 @@ CREATE TABLE work_schedules
 -- Absence justifications
 CREATE TABLE absence_justifications
 (
-    id            UUID PRIMARY KEY,
-    allowed_delay INTEGER     NOT NULL CHECK (allowed_delay > 0),
-    created_at    TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at    TIMESTAMPTZ
+    id                     UUID PRIMARY KEY,
+    allowed_delay_in_hours INTEGER     NOT NULL CHECK (allowed_delay_in_hours > 0),
+    created_at             TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at             TIMESTAMPTZ
 );
 
 -- Alert thresholds
@@ -54,7 +54,9 @@ CREATE TABLE document_templates
 (
     id         UUID PRIMARY KEY,
     path       TEXT        NOT NULL,
-    category   varchar(50) NOT NULL CHECK (category IN ('ATTESTATION', 'CONTRACT', 'DISCIPLINARY', 'INTERNSHIP', 'POLICY', 'OTHER')),
+    category   varchar(50) NOT NULL CHECK (category IN
+                                           ('ATTESTATION', 'CONTRACT', 'DISCIPLINARY', 'INTERNSHIP', 'POLICY',
+                                            'OTHER')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ
 );

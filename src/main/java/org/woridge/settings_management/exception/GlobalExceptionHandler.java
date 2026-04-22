@@ -9,13 +9,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.woridge.settings_management.dto.ErrorResponse;
 import org.woridge.settings_management.enumeration.ErrorCode;
-import org.woridge.settings_management.exception.annual_leave.AnnualBalanceNotFoundException;
-import org.woridge.settings_management.exception.exceptional_leave.ExceptionalLeaveNotFoundException;
+import org.woridge.settings_management.exception.absence_justification.AbsenceJustificationNotConfiguredException;
+import org.woridge.settings_management.exception.alert_threshold.AlertThresholdNotConfiguredException;
+import org.woridge.settings_management.exception.alert_threshold.CriticalThresholdLessThanWarningThresholdException;
+import org.woridge.settings_management.exception.annual_leave.AnnualBalanceNotConfigureException;
+import org.woridge.settings_management.exception.exceptional_leave.ExceptionalLeaveNotConfiguredException;
 import org.woridge.settings_management.exception.exceptional_leave.GrantedDaysLessThanLegalBalanceException;
 import org.woridge.settings_management.exception.request.MissingCinInRequestHeaderException;
 import org.woridge.settings_management.exception.request.MissingRoleInRequestHeaderException;
 import org.woridge.settings_management.exception.request.MissingSubdomainInRequestHeaderException;
 import org.woridge.settings_management.exception.request.MissingSubscriptionStatusInRequestHeaderException;
+import org.woridge.settings_management.exception.work_schedule.*;
 
 import java.util.List;
 
@@ -23,29 +27,29 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     // Annual leave exceptions
-    @ExceptionHandler(AnnualBalanceNotFoundException.class)
-    public ResponseEntity<ErrorResponse<String>> handleAnnualBalanceNotFoundException(AnnualBalanceNotFoundException exception) {
+    @ExceptionHandler(AnnualBalanceNotConfigureException.class)
+    public ResponseEntity<ErrorResponse<String>> handleAnnualBalanceNotFoundException(AnnualBalanceNotConfigureException exception) {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(
                         ErrorResponse.createErrorResponse(
                                 exception.getMessage(),
-                                ErrorCode.ANNUAL_BALANCE_NOT_FOUND
+                                ErrorCode.ANNUAL_BALANCE_NOT_CONFIGURED
                         )
                 );
     }
 
     // Exceptional leave exceptions
-    @ExceptionHandler(ExceptionalLeaveNotFoundException.class)
-    public ResponseEntity<ErrorResponse<String>> handleExceptionalLeaveNotFoundException(ExceptionalLeaveNotFoundException exception) {
+    @ExceptionHandler(ExceptionalLeaveNotConfiguredException.class)
+    public ResponseEntity<ErrorResponse<String>> handleExceptionalLeaveNotFoundException(ExceptionalLeaveNotConfiguredException exception) {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(
                         ErrorResponse.createErrorResponse(
                                 exception.getMessage(),
-                                ErrorCode.EXCEPTIONAL_LEAVE_NOT_FOUND
+                                ErrorCode.EXCEPTIONAL_LEAVE_NOT_CONFIGURED
                         )
                 );
     }
@@ -54,11 +58,149 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse<String>> handleGrantedDaysLessThanLegalBalanceException(GrantedDaysLessThanLegalBalanceException exception) {
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
                 .body(
                         ErrorResponse.createErrorResponse(
                                 exception.getMessage(),
                                 ErrorCode.GRANTED_DAYS_LESS_THAN_LEGAL_BALANCE
+                        )
+                );
+    }
+
+    // Absence justification exceptions
+    @ExceptionHandler(AbsenceJustificationNotConfiguredException.class)
+    public ResponseEntity<ErrorResponse<String>> handleAbsenceJustificationNotFoundException(AbsenceJustificationNotConfiguredException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.ABSENCE_JUSTIFICATION_NOT_CONFIGURED
+                        )
+                );
+    }
+
+    // Alert threshold exceptions
+    @ExceptionHandler(AlertThresholdNotConfiguredException.class)
+    public ResponseEntity<ErrorResponse<String>> handleAlertThresholdNotFoundException(AlertThresholdNotConfiguredException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.ALERT_THRESHOLD_NOT_CONFIGURED
+                        )
+                );
+    }
+
+    @ExceptionHandler(CriticalThresholdLessThanWarningThresholdException.class)
+    public ResponseEntity<ErrorResponse<String>> handleCriticalThresholdLessThanWarningThresholdException(CriticalThresholdLessThanWarningThresholdException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.CRITICAL_THRESHOLD_LESS_THAN_WARNING_THRESHOLD
+                        )
+                );
+    }
+
+    // Work schedule exceptions
+    @ExceptionHandler(DailyHoursNotAllowedForFixedScheduleException.class)
+    public ResponseEntity<ErrorResponse<String>> handleDailyHoursNotAllowedForFixedScheduleException(DailyHoursNotAllowedForFixedScheduleException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.DAILY_HOURS_NOT_ALLOWED_FOR_FIXED_SCHEDULE
+                        )
+                );
+    }
+
+    @ExceptionHandler(DailyHoursOutOfAllowedRangeException.class)
+    public ResponseEntity<ErrorResponse<String>> handleDailyHoursOutOfAllowedRangeException(DailyHoursOutOfAllowedRangeException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.DAILY_HOURS_OUT_OF_ALLOWED_RANGE
+                        )
+                );
+    }
+
+    @ExceptionHandler(EntryOrExitTimeNotAllowedForFlexibleScheduleException.class)
+    public ResponseEntity<ErrorResponse<String>> handleEntryOrExitTimeNotAllowedForFlexibleScheduleException(EntryOrExitTimeNotAllowedForFlexibleScheduleException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.ENTRY_OR_EXIT_TIME_NOT_ALLOWED_FOR_FLEXIBLE_SCHEDULE
+                        )
+                );
+    }
+
+    @ExceptionHandler(ExitTimeNotAfterEntryTimeException.class)
+    public ResponseEntity<ErrorResponse<String>> handleExitTimeNotAfterEntryTimeException(ExitTimeNotAfterEntryTimeException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.EXIT_TIME_NOT_AFTER_ENTRY_TIME
+                        )
+                );
+    }
+
+    @ExceptionHandler(MissingDailyHoursForFlexibleScheduleException.class)
+    public ResponseEntity<ErrorResponse<String>> handleMissingDailyHoursForFlexibleScheduleException(MissingDailyHoursForFlexibleScheduleException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.MISSING_DAILY_HOURS_FOR_FLEXIBLE_SCHEDULE
+                        )
+                );
+    }
+
+    @ExceptionHandler(MissingEntryTimeForFixedScheduleException.class)
+    public ResponseEntity<ErrorResponse<String>> handleMissingEntryTimeForFixedScheduleException(MissingEntryTimeForFixedScheduleException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.MISSING_ENTRY_TIME_FOR_FIXED_SCHEDULE
+                        )
+                );
+    }
+
+    @ExceptionHandler(MissingExitTimeForFixedScheduleException.class)
+    public ResponseEntity<ErrorResponse<String>> handleMissingExitTimeForFixedScheduleException(MissingExitTimeForFixedScheduleException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.MISSING_EXIT_TIME_FOR_FIXED_SCHEDULE
+                        )
+                );
+    }
+
+    @ExceptionHandler(WorkScheduleNotConfiguredException.class)
+    public ResponseEntity<ErrorResponse<String>> handleWorkScheduleNotConfiguredException(WorkScheduleNotConfiguredException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.WORK_SCHEDULE_NOT_CONFIGURED
                         )
                 );
     }
@@ -138,16 +280,15 @@ public class GlobalExceptionHandler {
                 );
     }
 
-    // Enum deserialization exception
+    // JSON deserialization exception
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse<String>> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+    public ResponseEntity<ErrorResponse<String>> handleHttpMessageNotReadableException() {
 
         return ResponseEntity
-                .status(HttpStatus.UNPROCESSABLE_CONTENT)
-                .body(
-                        ErrorResponse.createErrorResponse(
-                                "Invalid enum value",
-                                ErrorCode.INVALID_ENUM_VALUE
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.createErrorResponse(
+                                "Malformed JSON request",
+                                ErrorCode.INVALID_REQUEST_FORMAT
                         )
                 );
     }

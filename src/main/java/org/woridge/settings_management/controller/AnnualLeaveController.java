@@ -2,7 +2,6 @@ package org.woridge.settings_management.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.woridge.settings_management.dto.SuccessResponse;
@@ -18,18 +17,13 @@ public class AnnualLeaveController {
     private final AnnualLeaveService annualLeaveService;
 
     @PutMapping
-    public ResponseEntity<SuccessResponse<Void>> configureAnnualBalance(@Valid @RequestBody ConfigureAnnualBalanceRequest configureAnnualBalanceRequest) {
+    public ResponseEntity<Void> configureAnnualBalance(@Valid @RequestBody ConfigureAnnualBalanceRequest configureAnnualBalanceRequest) {
 
         annualLeaveService.configureAnnualBalance(configureAnnualBalanceRequest);
 
         return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .body(
-                        SuccessResponse.createSuccessResponse(
-                                "Annual balance configured successfully",
-                                null
-                        )
-                );
+                .noContent()
+                .build();
     }
 
     @GetMapping

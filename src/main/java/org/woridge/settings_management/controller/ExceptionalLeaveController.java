@@ -2,7 +2,6 @@ package org.woridge.settings_management.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.woridge.settings_management.dto.SuccessResponse;
@@ -25,13 +24,8 @@ public class ExceptionalLeaveController {
         exceptionalLeaveService.updateExceptionalLeaves(updateExceptionalLeavesRequest);
 
         return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .body(
-                        SuccessResponse.createSuccessResponse(
-                                "Exceptional leaves updated successfully",
-                                null
-                        )
-                );
+                .noContent()
+                .build();
     }
 
     @GetMapping

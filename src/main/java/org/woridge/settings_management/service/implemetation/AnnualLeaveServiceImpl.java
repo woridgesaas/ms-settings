@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.woridge.settings_management.dto.annual_leave.ConfigureAnnualBalanceRequest;
 import org.woridge.settings_management.dto.annual_leave.GetAnnualBalanceResponse;
-import org.woridge.settings_management.exception.annual_leave.AnnualBalanceNotFoundException;
+import org.woridge.settings_management.exception.annual_leave.AnnualBalanceNotConfigureException;
 import org.woridge.settings_management.mapper.AnnualLeaveMapper;
 import org.woridge.settings_management.model.AnnualLeave;
 import org.woridge.settings_management.repository.AnnualLeaveRepository;
@@ -38,7 +38,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     public GetAnnualBalanceResponse getAnnualBalance() {
 
         AnnualLeave annualLeave = annualLeaveRepository.findFirstBy().orElseThrow(() ->
-                new AnnualBalanceNotFoundException("Annual balance not found"));
+                new AnnualBalanceNotConfigureException("Annual balance not configured"));
 
         return AnnualLeaveMapper.toGetAnnualBalanceResponse(annualLeave);
     }
