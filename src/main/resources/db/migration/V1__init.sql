@@ -53,10 +53,9 @@ CREATE TABLE alert_thresholds
 CREATE TABLE document_templates
 (
     id         UUID PRIMARY KEY,
-    path       TEXT        NOT NULL,
     category   varchar(50) NOT NULL CHECK (category IN
-                                           ('ATTESTATION', 'CONTRACT', 'DISCIPLINARY', 'INTERNSHIP', 'POLICY',
-                                            'OTHER')),
+                                           ('ATTESTATION', 'CONTRACT', 'DISCIPLINARY', 'INTERNSHIP', 'POLICY')),
+    path       TEXT        NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ
 );

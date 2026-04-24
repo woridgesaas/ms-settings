@@ -7,14 +7,17 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.woridge.settings_management.dto.ErrorResponse;
 import org.woridge.settings_management.enumeration.ErrorCode;
 import org.woridge.settings_management.exception.absence_justification.AbsenceJustificationNotConfiguredException;
 import org.woridge.settings_management.exception.alert_threshold.AlertThresholdNotConfiguredException;
 import org.woridge.settings_management.exception.alert_threshold.CriticalThresholdLessThanWarningThresholdException;
 import org.woridge.settings_management.exception.annual_leave.AnnualBalanceNotConfigureException;
+import org.woridge.settings_management.exception.document_template.*;
 import org.woridge.settings_management.exception.exceptional_leave.ExceptionalLeaveNotConfiguredException;
 import org.woridge.settings_management.exception.exceptional_leave.GrantedDaysLessThanLegalBalanceException;
+import org.woridge.settings_management.exception.minio.*;
 import org.woridge.settings_management.exception.request.MissingCinInRequestHeaderException;
 import org.woridge.settings_management.exception.request.MissingRoleInRequestHeaderException;
 import org.woridge.settings_management.exception.request.MissingSubdomainInRequestHeaderException;
@@ -205,6 +208,151 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    // Document template exceptions
+    @ExceptionHandler(DocumentTemplateConversionFailedException.class)
+    public ResponseEntity<ErrorResponse<String>> handleDocumentTemplateConversionFailedException(DocumentTemplateConversionFailedException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.DOCUMENT_TEMPLATE_CONVERSION_FAILED
+                        )
+                );
+    }
+
+    @ExceptionHandler(DocumentTemplateNotConfiguredException.class)
+    public ResponseEntity<ErrorResponse<String>> handleDocumentTemplateNotConfiguredException(DocumentTemplateNotConfiguredException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.DOCUMENT_TEMPLATE_NOT_CONFIGURED
+                        )
+                );
+    }
+
+    @ExceptionHandler(InvalidDocumentTemplateContentTypeException.class)
+    public ResponseEntity<ErrorResponse<String>> handleInvalidDocumentTemplateContentTypeException(InvalidDocumentTemplateContentTypeException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.INVALID_DOCUMENT_TEMPLATE_CONTENT_TYPE
+                        )
+                );
+    }
+
+    @ExceptionHandler(InvalidDocumentTemplateExtensionException.class)
+    public ResponseEntity<ErrorResponse<String>> handleInvalidDocumentTemplateExtensionException(InvalidDocumentTemplateExtensionException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.INVALID_DOCUMENT_TEMPLATE_EXTENSION
+                        )
+                );
+    }
+
+    @ExceptionHandler(InvalidDocumentTemplatePathException.class)
+    public ResponseEntity<ErrorResponse<String>> handleInvalidDocumentTemplatePathException(InvalidDocumentTemplatePathException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.INVALID_DOCUMENT_TEMPLATE_PATH
+                        )
+                );
+    }
+
+    @ExceptionHandler(InvalidDocumentTemplateSizeException.class)
+    public ResponseEntity<ErrorResponse<String>> handleInvalidDocumentTemplateSizeException(InvalidDocumentTemplateSizeException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONTENT_TOO_LARGE)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.INVALID_DOCUMENT_TEMPLATE_SIZE
+                        )
+                );
+    }
+
+    // Minio exceptions
+    @ExceptionHandler(MinioBucketCheckFailedException.class)
+    public ResponseEntity<ErrorResponse<String>> handleMinioBucketCheckFailedException(MinioBucketCheckFailedException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.MINIO_BUCKET_CHECK_FAILED
+                        )
+                );
+    }
+
+    @ExceptionHandler(MinioBucketCreationFailedException.class)
+    public ResponseEntity<ErrorResponse<String>> handleMinioBucketCreationFailedException(MinioBucketCreationFailedException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.MINIO_BUCKET_CREATION_FAILED
+                        )
+                );
+    }
+
+    @ExceptionHandler(MinioDeleteDocumentTemplateFailedException.class)
+    public ResponseEntity<ErrorResponse<String>> handleMinioDeleteDocumentTemplateFailedException(MinioDeleteDocumentTemplateFailedException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.MINIO_DELETE_DOCUMENT_TEMPLATE_FAILED
+                        )
+                );
+    }
+
+    @ExceptionHandler(MinioPresignedUrlGenerationFailedException.class)
+    public ResponseEntity<ErrorResponse<String>> handleMinioPresignedUrlGenerationFailedException(MinioPresignedUrlGenerationFailedException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.MINIO_PRESIGNED_URL_GENERATION_FAILED
+                        )
+                );
+    }
+
+    @ExceptionHandler(MinioUploadDocumentTemplateFailedException.class)
+    public ResponseEntity<ErrorResponse<String>> handleMinioUploadDocumentTemplateFailedException(MinioUploadDocumentTemplateFailedException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.MINIO_UPLOAD_DOCUMENT_TEMPLATE_FAILED
+                        )
+                );
+    }
+
     // Request exceptions
     @ExceptionHandler(MissingCinInRequestHeaderException.class)
     public ResponseEntity<ErrorResponse<String>> handleMissingCinInRequestHeaderException(MissingCinInRequestHeaderException exception) {
@@ -289,6 +437,20 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.createErrorResponse(
                                 "Malformed JSON request",
                                 ErrorCode.INVALID_REQUEST_FORMAT
+                        )
+                );
+    }
+
+    // Max upload size
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse<String>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONTENT_TOO_LARGE)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                "File size exceeds maximum allowed limit",
+                                ErrorCode.FILE_TOO_LARGE
                         )
                 );
     }

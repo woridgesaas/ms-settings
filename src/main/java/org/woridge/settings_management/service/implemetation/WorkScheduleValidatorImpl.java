@@ -1,23 +1,21 @@
 package org.woridge.settings_management.service.implemetation;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.woridge.settings_management.dto.work_schedule.ConfigureWorkScheduleRequest;
 import org.woridge.settings_management.exception.work_schedule.*;
 import org.woridge.settings_management.model.WorkSchedule;
+import org.woridge.settings_management.properties.WorkScheduleProperties;
 import org.woridge.settings_management.service.WorkScheduleValidator;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
 @Service
+@AllArgsConstructor
 public class WorkScheduleValidatorImpl implements WorkScheduleValidator {
 
-    @Value("${work-schedule.min-daily-hours}")
-    private double MIN_DAILY_HOURS;
-
-    @Value("${work-schedule.max-daily-hours}")
-    private double MAX_DAILY_HOURS;
+    private final WorkScheduleProperties workScheduleProperties;
 
     @Override
     public void validateWorkSchedule(ConfigureWorkScheduleRequest configureWorkScheduleRequest) {
@@ -84,10 +82,10 @@ public class WorkScheduleValidatorImpl implements WorkScheduleValidator {
             throw new EntryOrExitTimeNotAllowedForFlexibleScheduleException("Entry time and exit time must not be provided when work schedule type is flexible hours");
         }
 
-        if (configureWorkScheduleRequest.dailyHours().compareTo(BigDecimal.valueOf(MIN_DAILY_HOURS)) < 0
-                || configureWorkScheduleRequest.dailyHours().compareTo(BigDecimal.valueOf(MAX_DAILY_HOURS)) > 0) {
+        if (configureWorkScheduleRequest.dailyHours().compareTo(BigDecimal.valueOf(workScheduleProperties.getMIN_DAILY_HOURS())) < 0
+                || configureWorkScheduleRequest.dailyHours().compareTo(BigDecimal.valueOf(workScheduleProperties.getMAX_DAILY_HOURS())) > 0) {
 
-            throw new DailyHoursOutOfAllowedRangeException("Daily hours must be between " + MIN_DAILY_HOURS + " and " + MAX_DAILY_HOURS + " hours");
+            throw new DailyHoursOutOfAllowedRangeException("Daily hours must be between " + workScheduleProperties.getMIN_DAILY_HOURS() + " and " + workScheduleProperties.getMAX_DAILY_HOURS() + " hours");
         }
     }
 }
