@@ -17,7 +17,10 @@ import org.woridge.settings_management.exception.annual_leave.AnnualBalanceNotCo
 import org.woridge.settings_management.exception.document_template.*;
 import org.woridge.settings_management.exception.exceptional_leave.ExceptionalLeaveNotConfiguredException;
 import org.woridge.settings_management.exception.exceptional_leave.GrantedDaysLessThanLegalBalanceException;
+import org.woridge.settings_management.exception.file.FileConversionFailedException;
+import org.woridge.settings_management.exception.file.MissingFileExtensionException;
 import org.woridge.settings_management.exception.minio.*;
+import org.woridge.settings_management.exception.recruitment_site.*;
 import org.woridge.settings_management.exception.request.MissingCinInRequestHeaderException;
 import org.woridge.settings_management.exception.request.MissingRoleInRequestHeaderException;
 import org.woridge.settings_management.exception.request.MissingSubdomainInRequestHeaderException;
@@ -209,19 +212,6 @@ public class GlobalExceptionHandler {
     }
 
     // Document template exceptions
-    @ExceptionHandler(DocumentTemplateConversionFailedException.class)
-    public ResponseEntity<ErrorResponse<String>> handleDocumentTemplateConversionFailedException(DocumentTemplateConversionFailedException exception) {
-
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(
-                        ErrorResponse.createErrorResponse(
-                                exception.getMessage(),
-                                ErrorCode.DOCUMENT_TEMPLATE_CONVERSION_FAILED
-                        )
-                );
-    }
-
     @ExceptionHandler(DocumentTemplateNotConfiguredException.class)
     public ResponseEntity<ErrorResponse<String>> handleDocumentTemplateNotConfiguredException(DocumentTemplateNotConfiguredException exception) {
 
@@ -314,15 +304,15 @@ public class GlobalExceptionHandler {
                 );
     }
 
-    @ExceptionHandler(MinioDeleteDocumentTemplateFailedException.class)
-    public ResponseEntity<ErrorResponse<String>> handleMinioDeleteDocumentTemplateFailedException(MinioDeleteDocumentTemplateFailedException exception) {
+    @ExceptionHandler(MinioDeleteFileFailedException.class)
+    public ResponseEntity<ErrorResponse<String>> handleMinioDeleteFileFailedException(MinioDeleteFileFailedException exception) {
 
         return ResponseEntity
                 .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(
                         ErrorResponse.createErrorResponse(
                                 exception.getMessage(),
-                                ErrorCode.MINIO_DELETE_DOCUMENT_TEMPLATE_FAILED
+                                ErrorCode.MINIO_DELETE_FILE_FAILED
                         )
                 );
     }
@@ -340,15 +330,108 @@ public class GlobalExceptionHandler {
                 );
     }
 
-    @ExceptionHandler(MinioUploadDocumentTemplateFailedException.class)
-    public ResponseEntity<ErrorResponse<String>> handleMinioUploadDocumentTemplateFailedException(MinioUploadDocumentTemplateFailedException exception) {
+    @ExceptionHandler(MinioUploadFileFailedException.class)
+    public ResponseEntity<ErrorResponse<String>> handleMinioUploadFileFailedException(MinioUploadFileFailedException exception) {
 
         return ResponseEntity
                 .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(
                         ErrorResponse.createErrorResponse(
                                 exception.getMessage(),
-                                ErrorCode.MINIO_UPLOAD_DOCUMENT_TEMPLATE_FAILED
+                                ErrorCode.MINIO_UPLOAD_FILE_FAILED
+                        )
+                );
+    }
+
+    // File exceptions
+    @ExceptionHandler(FileConversionFailedException.class)
+    public ResponseEntity<ErrorResponse<String>> handleFileConversionFailedException(FileConversionFailedException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.FILE_CONVERSION_FAILED
+                        )
+                );
+    }
+
+    @ExceptionHandler(MissingFileExtensionException.class)
+    public ResponseEntity<ErrorResponse<String>> handleMissingFileExtensionException(MissingFileExtensionException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.MISSING_FILE_EXTENSION
+                        )
+                );
+    }
+
+    // Recruitment site exceptions
+    @ExceptionHandler(InvalidRecruitmentSiteLogoContentTypeException.class)
+    public ResponseEntity<ErrorResponse<String>> handleInvalidRecruitmentSiteLogoContentTypeException(InvalidRecruitmentSiteLogoContentTypeException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.INVALID_RECRUITMENT_SITE_LOGO_CONTENT_TYPE
+                        )
+                );
+    }
+
+    @ExceptionHandler(InvalidRecruitmentSiteLogoExtensionException.class)
+    public ResponseEntity<ErrorResponse<String>> handleInvalidRecruitmentSiteLogoExtensionException(InvalidRecruitmentSiteLogoExtensionException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.INVALID_RECRUITMENT_SITE_LOGO_EXTENSION
+                        )
+                );
+    }
+
+    @ExceptionHandler(InvalidRecruitmentSiteLogoSizeException.class)
+    public ResponseEntity<ErrorResponse<String>> handleInvalidRecruitmentSiteLogoSizeException(InvalidRecruitmentSiteLogoSizeException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONTENT_TOO_LARGE)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.INVALID_RECRUITMENT_SITE_LOGO_SIZE
+                        )
+                );
+    }
+
+    @ExceptionHandler(RecruitmentSiteLogMissingException.class)
+    public ResponseEntity<ErrorResponse<String>> handleRecruitmentSiteLogMissingException(RecruitmentSiteLogMissingException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.MISSING_LOGO_FOR_RECRUITMENT_SITE
+                        )
+                );
+    }
+
+    @ExceptionHandler(RecruitmentSiteNotConfiguredException.class)
+    public ResponseEntity<ErrorResponse<String>> handleRecruitmentSiteNotConfiguredException(RecruitmentSiteNotConfiguredException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.RECRUITMENT_SITE_NOT_CONFIGURED
                         )
                 );
     }

@@ -12,7 +12,7 @@ import org.woridge.settings_management.exception.document_template.DocumentTempl
 import org.woridge.settings_management.mapper.DocumentTemplateMapper;
 import org.woridge.settings_management.model.DocumentTemplate;
 import org.woridge.settings_management.repository.DocumentTemplateRepository;
-import org.woridge.settings_management.service.DocumentTemplateConversion;
+import org.woridge.settings_management.service.FileConversion;
 import org.woridge.settings_management.service.DocumentTemplateService;
 import org.woridge.settings_management.service.DocumentTemplateValidator;
 import org.woridge.settings_management.service.MinioService;
@@ -30,7 +30,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     private final DocumentTemplateRepository documentTemplateRepository;
     private final DocumentTemplateValidator documentTemplateValidator;
     private final MinioService minioService;
-    private final DocumentTemplateConversion documentTemplateConversion;
+    private final FileConversion fileConversion;
     private final HttpServletRequest httpServletRequest;
 
     @Override
@@ -52,7 +52,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
         DocumentTemplate currentDocumentTemplate = documentTemplateRepository.findById(documentTemplateId).orElseThrow(() ->
                 new DocumentTemplateNotConfiguredException("Document template with id : " + documentTemplateId + " not configured"));
 
-        String previewUrl = minioService.generateDocumentTemplatePreviewUrl(currentDocumentTemplate.getPath());
+        String previewUrl = minioService.generateFilePreviewUrl(currentDocumentTemplate.getPath());
 
         return DocumentTemplateMapper.toPreviewDocumentTemplateResponse(previewUrl);
     }
@@ -63,7 +63,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
         DocumentTemplate currentDocumentTemplate = documentTemplateRepository.findById(documentTemplateId).orElseThrow(() ->
                 new DocumentTemplateNotConfiguredException("Document template with id : " + documentTemplateId + " not configured"));
 
-        minioService.deleteDocumentTemplate(currentDocumentTemplate.getPath());
+        minioService.deleteFile(currentDocumentTemplate.getPath());
 
         documentTemplateRepository.delete(currentDocumentTemplate);
     }
@@ -73,12 +73,16 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
 
         documentTemplateValidator.validateDocumentTemplate(uploadDocumentTemplateItem.documentTemplate());
 
-        String fileName = FileUtils.buildDocumentTemplateFileName(uploadDocumentTemplateItem.category().name());
+        String fileName = FileUtils.buildFileName(
+                uploadDocumentTemplateItem.category().name(),
+                ".pdf"
+        );
 
-        String documentTemplatePath = minioService.uploadPdfDocumentTemplate(
+        String documentTemplatePath = minioService.uploadFile(
                 tenantName,
                 fileName,
-                documentTemplateConversion.convertMultipartFileToBytes(uploadDocumentTemplateItem.documentTemplate())
+                fileConversion.convertMultipartFileToBytes(uploadDocumentTemplateItem.documentTemplate()),
+                "application/pdf"
         );
 
         DocumentTemplate documentTemplate = DocumentTemplateMapper.toDocumentTemplate(uploadDocumentTemplateItem, documentTemplatePath);
