@@ -23,7 +23,7 @@ public class DocumentTemplateController {
     private final DocumentTemplateService documentTemplateService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<SuccessResponse<List<UploadDocumentTemplatesResponse>>> uploadDocumentTemplates(@Valid UploadDocumentTemplatesRequest uploadDocumentTemplatesRequest) {
+    public ResponseEntity<SuccessResponse<List<UploadDocumentTemplatesResponse>>> uploadDocumentTemplates(@Valid @ModelAttribute UploadDocumentTemplatesRequest uploadDocumentTemplatesRequest) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

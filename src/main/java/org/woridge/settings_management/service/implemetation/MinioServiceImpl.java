@@ -7,10 +7,10 @@ import io.minio.RemoveObjectArgs;
 import io.minio.http.Method;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.woridge.settings_management.dto.document_template.DocumentTemplateLocation;
+import org.woridge.settings_management.dto.file.FileLocation;
 import org.woridge.settings_management.exception.document_template.InvalidDocumentTemplatePathException;
-import org.woridge.settings_management.exception.minio.MinioDeleteDocumentTemplateFailedException;
-import org.woridge.settings_management.exception.minio.MinioUploadDocumentTemplateFailedException;
+import org.woridge.settings_management.exception.minio.MinioDeleteFileFailedException;
+import org.woridge.settings_management.exception.minio.MinioUploadFileFailedException;
 import org.woridge.settings_management.exception.minio.MinioPresignedUrlGenerationFailedException;
 import org.woridge.settings_management.properties.MinioProperties;
 import org.woridge.settings_management.service.MinioBucketService;
@@ -29,7 +29,7 @@ public class MinioServiceImpl implements MinioService {
     private final MinioProperties minioProperties;
 
     @Override
-    public String uploadPdfDocumentTemplate(String tenantName, String fileName, byte[] content) {
+    public String uploadFile(String tenantName, String fileName, byte[] content, String contentType) {
 
         String bucketName = MinioUtils.buildBucketName(tenantName, minioProperties.getServiceIdentifier());
 
@@ -47,7 +47,7 @@ public class MinioServiceImpl implements MinioService {
                                     content.length,
                                     -1
                             )
-                            .contentType("application/pdf")
+                            .contentType(contentType)
                             .build()
             );
 
@@ -55,14 +55,14 @@ public class MinioServiceImpl implements MinioService {
 
         } catch (Exception exception) {
 
-            throw new MinioUploadDocumentTemplateFailedException("Failed to upload PDF document : " + fileName + " to bucket : '" + bucketName);
+            throw new MinioUploadFileFailedException("Failed to upload file : " + fileName + " to bucket : " + bucketName);
         }
     }
 
     @Override
-    public String generateDocumentTemplatePreviewUrl(String documentTemplatePath) {
+    public String generateFilePreviewUrl(String filePath) {
 
-        DocumentTemplateLocation documentTemplateLocation = getDocumentTemplatePathParts(documentTemplatePath);
+        FileLocation fileLocation = getFilePathParts(filePath);
 
         try {
 
@@ -70,40 +70,40 @@ public class MinioServiceImpl implements MinioService {
                     GetPresignedObjectUrlArgs
                             .builder()
                             .method(Method.GET)
-                            .bucket(documentTemplateLocation.bucketName())
-                            .object(documentTemplateLocation.fileName())
+                            .bucket(fileLocation.bucketName())
+                            .object(fileLocation.fileName())
                             .expiry((int) minioProperties.getPresignedUrlExpiry().getSeconds(), TimeUnit.SECONDS)
                             .build()
             );
 
         } catch (Exception exception) {
 
-            throw new MinioPresignedUrlGenerationFailedException("Failed to generate document template preview URL for file : " + documentTemplateLocation.fileName() + " in bucket : " + documentTemplateLocation.bucketName());
+            throw new MinioPresignedUrlGenerationFailedException("Failed to generate document template preview URL for file : " + fileLocation.fileName() + " in bucket : " + fileLocation.bucketName());
         }
     }
 
     @Override
-    public void deleteDocumentTemplate(String documentTemplatePath) {
+    public void deleteFile(String filePath) {
 
-        DocumentTemplateLocation documentTemplateLocation = getDocumentTemplatePathParts(documentTemplatePath);
+        FileLocation fileLocation = getFilePathParts(filePath);
 
         try {
             minioClient.removeObject(
                     RemoveObjectArgs
                             .builder()
-                            .bucket(documentTemplateLocation.bucketName())
-                            .object(documentTemplateLocation.fileName())
+                            .bucket(fileLocation.bucketName())
+                            .object(fileLocation.fileName())
                             .build()
             );
 
         } catch (Exception exception) {
 
-            throw new MinioDeleteDocumentTemplateFailedException("Failed to delete document template : " + documentTemplateLocation.fileName() + " from bucket : " + documentTemplateLocation.bucketName());
+            throw new MinioDeleteFileFailedException("Failed to delete file : " + fileLocation.fileName() + " from bucket : " + fileLocation.bucketName());
         }
     }
 
     // Helper method
-    private DocumentTemplateLocation getDocumentTemplatePathParts(String documentTemplatePath) {
+    private FileLocation getFilePathParts(String documentTemplatePath) {
 
         String[] documentTemplatePathParts = documentTemplatePath.split("/", 2);
 
@@ -112,7 +112,7 @@ public class MinioServiceImpl implements MinioService {
             throw new InvalidDocumentTemplatePathException("Invalid document template path : " + documentTemplatePath);
         }
 
-        return new DocumentTemplateLocation(
+        return new FileLocation(
                 documentTemplatePathParts[0],
                 documentTemplatePathParts[1]
         );

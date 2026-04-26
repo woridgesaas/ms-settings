@@ -36,3 +36,9 @@ document-template:
   max-size-mb: 10
   allowed-content-type: application/pdf
   allowed-extension: .pdf
+
+recruitment-site:
+  logo:
+    max-size-mb: 2
+    allowed-content-types: image/png,image/jpeg,image/webp,image/svg+xml
+    allowed-extensions: .png,.jpg,.jpeg,.webp,.svg

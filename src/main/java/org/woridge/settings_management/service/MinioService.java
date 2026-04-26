@@ -2,9 +2,9 @@ package org.woridge.settings_management.service;
 
 public interface MinioService {
 
-    String uploadPdfDocumentTemplate(String tenantName, String fileName, byte[] content);
+    String uploadFile(String tenantName, String fileName, byte[] content, String contentType);
 
-    String generateDocumentTemplatePreviewUrl(String documentTemplatePath);
+    String generateFilePreviewUrl(String filePath);
 
-    void deleteDocumentTemplate(String documentTemplatePath);
+    void deleteFile(String filePath);
 }

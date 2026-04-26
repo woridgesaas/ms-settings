@@ -1,5 +1,7 @@
 package org.woridge.settings_management.utils;
 
+import org.woridge.settings_management.exception.file.MissingFileExtensionException;
+
 import java.util.UUID;
 
 public final class FileUtils {
@@ -9,9 +11,19 @@ public final class FileUtils {
         throw new UnsupportedOperationException("You can't instantiate file utils object");
     }
 
-    // Format : category_uuid.pdf
-    public static String buildDocumentTemplateFileName(String category) {
+    // Format : prefix_uuid.extension
+    public static String buildFileName(String prefix, String extension) {
 
-        return category.toLowerCase() + "_" + UUID.randomUUID() + ".pdf";
+        return prefix.toLowerCase() + "_" + UUID.randomUUID() + extension;
+    }
+
+    public static String extractExtension(String originalFilename) {
+
+        if (originalFilename != null && originalFilename.contains(".")) {
+
+            return originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
+        throw new MissingFileExtensionException("File : " + originalFilename + " has no extension");
     }
 }
