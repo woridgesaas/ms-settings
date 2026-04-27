@@ -14,6 +14,11 @@ public class RecruitmentSiteMapper {
                 .secondaryColor(configureRecruitmentSiteRequest.secondaryColor())
                 .logoPath(logoPath)
                 .description(configureRecruitmentSiteRequest.description())
+                .foundedYear(configureRecruitmentSiteRequest.foundedYear())
+                .email(configureRecruitmentSiteRequest.email())
+                .phone(configureRecruitmentSiteRequest.phone())
+                .address(configureRecruitmentSiteRequest.address())
+                .linkedinUrl(configureRecruitmentSiteRequest.linkedinUrl())
                 .build();
     }
 
@@ -22,6 +27,11 @@ public class RecruitmentSiteMapper {
         currentRecruitmentSite.setPrimaryColor(configureRecruitmentSiteRequest.primaryColor());
         currentRecruitmentSite.setSecondaryColor(configureRecruitmentSiteRequest.secondaryColor());
         currentRecruitmentSite.setDescription(configureRecruitmentSiteRequest.description());
+        currentRecruitmentSite.setFoundedYear(configureRecruitmentSiteRequest.foundedYear());
+        currentRecruitmentSite.setEmail(configureRecruitmentSiteRequest.email());
+        currentRecruitmentSite.setPhone(configureRecruitmentSiteRequest.phone());
+        currentRecruitmentSite.setAddress(configureRecruitmentSiteRequest.address());
+        currentRecruitmentSite.setLinkedinUrl(configureRecruitmentSiteRequest.linkedinUrl());
 
         if (newLogoPath != null) {
 
@@ -35,8 +45,12 @@ public class RecruitmentSiteMapper {
                 currentRecruitmentSite.getId(),
                 currentRecruitmentSite.getPrimaryColor(),
                 currentRecruitmentSite.getSecondaryColor(),
-                currentRecruitmentSite.getLogoPath(),
-                currentRecruitmentSite.getDescription()
+                currentRecruitmentSite.getDescription(),
+                currentRecruitmentSite.getFoundedYear(),
+                currentRecruitmentSite.getEmail(),
+                currentRecruitmentSite.getPhone(),
+                currentRecruitmentSite.getAddress(),
+                currentRecruitmentSite.getLinkedinUrl()
         );
     }
 }

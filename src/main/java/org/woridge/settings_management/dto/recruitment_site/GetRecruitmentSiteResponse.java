@@ -6,7 +6,11 @@ public record GetRecruitmentSiteResponse(
         UUID id,
         String primaryColor,
         String secondaryColor,
-        String logoPath,
-        String description
+        String description,
+        String foundedYear,
+        String email,
+        String phone,
+        String address,
+        String linkedinUrl
 ) {
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.woridge.settings_management.dto.file.FileResourceResponse;
 import org.woridge.settings_management.dto.recruitment_site.ConfigureRecruitmentSiteRequest;
 import org.woridge.settings_management.dto.recruitment_site.GetRecruitmentSiteResponse;
 import org.woridge.settings_management.exception.recruitment_site.RecruitmentSiteLogMissingException;
@@ -53,6 +54,19 @@ public class RecruitmentSiteServiceImpl implements RecruitmentSiteService {
                 new RecruitmentSiteNotConfiguredException("Recruitment site not configured"));
 
         return RecruitmentSiteMapper.toGetRecruitmentSiteResponse(currentRecruitmentSite);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public FileResourceResponse getLogo() {
+
+        RecruitmentSite currentRecruitmentSite = recruitmentSiteRepository.findFirstBy().orElseThrow(() ->
+                new RecruitmentSiteNotConfiguredException("Recruitment site not configured"));
+
+        return new FileResourceResponse(
+                minioService.downloadFile(currentRecruitmentSite.getLogoPath()),
+                FileUtils.resolveContentType(currentRecruitmentSite.getLogoPath())
+        );
     }
 
     // Helper methods

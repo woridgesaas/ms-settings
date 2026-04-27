@@ -64,10 +64,15 @@ CREATE TABLE document_templates
 CREATE TABLE recruitment_sites
 (
     id              UUID PRIMARY KEY,
-    primary_color   VARCHAR(50) NOT NULL,
-    secondary_color VARCHAR(50) NOT NULL,
-    logo_path       TEXT        NOT NULL,
-    description     TEXT,
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    primary_color   VARCHAR(50)  NOT NULL,
+    secondary_color VARCHAR(50)  NOT NULL,
+    logo_path       TEXT         NOT NULL,
+    description     TEXT         NOT NULL,
+    founded_year    VARCHAR(4)   NOT NULL,
+    email           VARCHAR(255) NOT NULL,
+    phone           VARCHAR(20)  NOT NULL,
+    address         VARCHAR(255) NOT NULL,
+    linkedin_url    TEXT         NOT NULL,
+    created_at      TIMESTAMPTZ  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMPTZ
 );

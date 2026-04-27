@@ -317,6 +317,19 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(MinioDownloadFileFailedException.class)
+    public ResponseEntity<ErrorResponse<String>> handleMinioDownloadFileFailedException(MinioDownloadFileFailedException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(
+                        ErrorResponse.createErrorResponse(
+                                exception.getMessage(),
+                                ErrorCode.MINIO_DOWNLOAD_FILE_FAILED
+                        )
+                );
+    }
+
     @ExceptionHandler(MinioPresignedUrlGenerationFailedException.class)
     public ResponseEntity<ErrorResponse<String>> handleMinioPresignedUrlGenerationFailedException(MinioPresignedUrlGenerationFailedException exception) {
 

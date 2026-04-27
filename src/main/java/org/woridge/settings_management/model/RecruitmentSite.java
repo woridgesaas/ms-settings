@@ -32,7 +32,23 @@ public class RecruitmentSite {
     @Column(nullable = false)
     private String logoPath;
 
+    @Column(nullable = false)
     private String description;
+
+    @Column(nullable = false)
+    private String foundedYear;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String phone;
+
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
+    private String linkedinUrl;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

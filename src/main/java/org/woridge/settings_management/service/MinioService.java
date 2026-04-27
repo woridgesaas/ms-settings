@@ -7,4 +7,6 @@ public interface MinioService {
     String generateFilePreviewUrl(String filePath);
 
     void deleteFile(String filePath);
+
+    byte[] downloadFile(String filePath);
 }
