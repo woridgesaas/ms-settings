@@ -57,6 +57,11 @@ public class RecruitmentSiteValidatorImpl implements RecruitmentSiteValidator {
         return Objects.equals(currentRecruitmentSite.getPrimaryColor(), configureRecruitmentSiteRequest.primaryColor())
                 && Objects.equals(currentRecruitmentSite.getSecondaryColor(), configureRecruitmentSiteRequest.secondaryColor())
                 && Objects.equals(currentRecruitmentSite.getDescription(), configureRecruitmentSiteRequest.description())
-                && (logo == null || logo.isEmpty());
+                && (logo == null || logo.isEmpty())
+                && Objects.equals(currentRecruitmentSite.getFoundedYear(), configureRecruitmentSiteRequest.foundedYear())
+                && Objects.equals(currentRecruitmentSite.getEmail(), configureRecruitmentSiteRequest.email())
+                && Objects.equals(currentRecruitmentSite.getPhone(), configureRecruitmentSiteRequest.phone())
+                && Objects.equals(currentRecruitmentSite.getAddress(), configureRecruitmentSiteRequest.address())
+                && Objects.equals(currentRecruitmentSite.getLinkedinUrl(), configureRecruitmentSiteRequest.linkedinUrl());
     }
 }

@@ -1,15 +1,13 @@
 package org.woridge.settings_management.service.implemetation;
 
-import io.minio.GetPresignedObjectUrlArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
-import io.minio.RemoveObjectArgs;
+import io.minio.*;
 import io.minio.http.Method;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.woridge.settings_management.dto.file.FileLocation;
 import org.woridge.settings_management.exception.document_template.InvalidDocumentTemplatePathException;
 import org.woridge.settings_management.exception.minio.MinioDeleteFileFailedException;
+import org.woridge.settings_management.exception.minio.MinioDownloadFileFailedException;
 import org.woridge.settings_management.exception.minio.MinioUploadFileFailedException;
 import org.woridge.settings_management.exception.minio.MinioPresignedUrlGenerationFailedException;
 import org.woridge.settings_management.properties.MinioProperties;
@@ -18,6 +16,7 @@ import org.woridge.settings_management.service.MinioService;
 import org.woridge.settings_management.utils.MinioUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -88,6 +87,7 @@ public class MinioServiceImpl implements MinioService {
         FileLocation fileLocation = getFilePathParts(filePath);
 
         try {
+
             minioClient.removeObject(
                     RemoveObjectArgs
                             .builder()
@@ -99,6 +99,29 @@ public class MinioServiceImpl implements MinioService {
         } catch (Exception exception) {
 
             throw new MinioDeleteFileFailedException("Failed to delete file : " + fileLocation.fileName() + " from bucket : " + fileLocation.bucketName());
+        }
+    }
+
+    @Override
+    public byte[] downloadFile(String filePath) {
+
+        FileLocation fileLocation = getFilePathParts(filePath);
+
+        try {
+
+            InputStream stream = minioClient.getObject(
+                    GetObjectArgs
+                            .builder()
+                            .bucket(fileLocation.bucketName())
+                            .object(fileLocation.fileName())
+                            .build()
+            );
+
+            return stream.readAllBytes();
+
+        } catch (Exception exception) {
+
+            throw new MinioDownloadFileFailedException("Failed to download file : " + fileLocation.fileName() + " from bucket : " + fileLocation.bucketName());
         }
     }
 

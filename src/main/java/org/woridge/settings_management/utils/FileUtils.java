@@ -26,4 +26,21 @@ public final class FileUtils {
 
         throw new MissingFileExtensionException("File : " + originalFilename + " has no extension");
     }
+
+    public static String resolveContentType(String filePath) {
+
+        if (filePath == null || filePath.isBlank()) {
+            return "application/octet-stream";
+        }
+
+        String extension = filePath.substring(filePath.lastIndexOf('.')).toLowerCase();
+
+        return switch (extension) {
+            case ".png" -> "image/png";
+            case ".jpg", ".jpeg" -> "image/jpeg";
+            case ".webp" -> "image/webp";
+            case ".svg" -> "image/svg+xml";
+            default -> "application/octet-stream";
+        };
+    }
 }
