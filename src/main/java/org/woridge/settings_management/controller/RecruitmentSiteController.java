@@ -52,7 +52,9 @@ public class RecruitmentSiteController {
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.parseMediaType(fileResourceResponse.contentType()))
-                .header(HttpHeaders.CACHE_CONTROL, "public, max-age=86400")
+                .header(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate")
+                .header(HttpHeaders.PRAGMA, "no-cache")
+                .header(HttpHeaders.EXPIRES, "0")
                 .body(fileResourceResponse.content());
     }
 }

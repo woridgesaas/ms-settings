@@ -79,6 +79,18 @@ public class InternalRequestFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    @Override
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
+
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        return method.equals("GET")
+                && (path.equals("/api/settings/recruitment-sites")
+                || path.equals("/api/settings/recruitment-sites/logo")
+        );
+    }
+
     private void writeErrorResponse(HttpServletResponse response, HttpStatus status, String message, ErrorCode errorCode) throws IOException {
 
         ErrorResponse<String> error = ErrorResponse.createErrorResponse(
