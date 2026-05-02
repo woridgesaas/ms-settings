@@ -12,7 +12,11 @@ spring:
     multipart:
       max-file-size: ${MAX_FILE_SIZE}
       max-request-size: ${MAX_REQUEST_SIZE}
-
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}
 server:
   port: 8088
   servlet:
@@ -47,7 +51,7 @@ rabbitmq:
   exchange:
     notification: woridge.exchange
   routing:
-    tenant-ready: tenant.ready.mms-settings
+    tenant-ready: tenant.ready.ms-settings
   queue:
     provisioning: q.settings.provisioning
 
