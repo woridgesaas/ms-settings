@@ -55,6 +55,17 @@ rabbitmq:
   queue:
     provisioning: q.settings.provisioning
 
+
+logging:
+  level:
+    root: INFO
+    org.woridge: DEBUG
+  logback:
+    rollingpolicy:
+      max-history: 3
+      max-file-size: 10MB
+
+
 tenant:
   database:
     host: woridge.db.settings
