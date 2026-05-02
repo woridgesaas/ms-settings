@@ -8,10 +8,11 @@ services:
 variables:
   DOCKER_TLS_CERTDIR: ""         # Désactiver TLS (obligatoire avec dind)
   IMAGE_NAME: ms-settings        # Nom de l’image Docker
-  IMAGE_TAG: latest              # Tag de l’image
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
 
 stages:
   - build
+  - test
   - docker
 
 # =========================
@@ -21,10 +22,24 @@ build-maven:
   stage: build
   image: maven:3.9.11-eclipse-temurin-21
   script:
-    - mvn clean package -DskipTests
+    - mvn clean compile -DskipTests
   artifacts:
     paths:
       - target/*.jar
+    expire_in: 15 minutes
+
+unit-tests:
+  stage: test
+  image: maven:3.9.11-eclipse-temurin-21
+  script:
+    - mvn clean test
+  artifacts:
+    paths:
+      - target/surefire-reports/*.xml
+    reports:
+      junit: target/surefire-reports/*.xml
+    expire_in: 2 days
+  allow_failure: false
 
 # =========================
 # 2️⃣ Build image Docker
