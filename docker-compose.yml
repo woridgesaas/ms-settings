@@ -4,24 +4,26 @@ services:
   # =========================
   # Base de données PostgreSQL
   # =========================
-  db-settings:
+  woridge.db.settings:
     image: postgres:16
     container_name: db-settings
-
     environment:
-      POSTGRES_DB: settings_db
-      POSTGRES_USER: settings_user
-
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5439:5432"   # optionnel
-
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - settings-db-data:/var/lib/postgresql/data
-
     restart: unless-stopped
-
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - woridge-external-network
+      - provisioning-service-network
 
 
   # =========================
@@ -29,26 +31,21 @@ services:
   # =========================
   ms-settings:
     container_name: woridge-ms-settings
-
     build:
       context: .
       dockerfile: infra/Dockerfile
-
+    env_file:
+      - .env
     image: ms-settings:latest
-
     ports:
-      - "8088:8080"
-
+      - "${SERVER_PORT}:8080"
     environment:
       SPRING_PROFILES_ACTIVE: docker
-
-      # 🔗 Connexion DB
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db-settings:5432/settings_db
-      SPRING_DATASOURCE_USERNAME: settings_user
-      SPRING_DATASOURCE_PASSWORD: settings_pass
-
+      SPRING_DATASOURCE_URL: jdbc:postgresql://woridge.settings.db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
-      - db-settings
+      - woridge.db.settings
 
     restart: unless-stopped
 
@@ -68,4 +65,7 @@ volumes:
 # =========================
 networks:
   woridge-external-network:
+    external: true
+
+  provisioning-service-network:
     external: true
