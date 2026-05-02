@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.woridge.settings_management.dto.ErrorResponse;
+import org.woridge.settings_management.dto.tenant.TenantContext;
 import org.woridge.settings_management.enumeration.ErrorCode;
 import tools.jackson.databind.ObjectMapper;
 
@@ -76,7 +77,15 @@ public class InternalRequestFilter extends OncePerRequestFilter {
             return;
         }
 
-        filterChain.doFilter(request, response);
+        try {
+            String subdomain = request.getHeader("X-Subdomain");
+            if (subdomain != null && !subdomain.isBlank()) {
+                TenantContext.setCurrentTenant(subdomain);
+            }
+            filterChain.doFilter(request, response);
+        } finally {
+            TenantContext.clear();
+        }
     }
 
     @Override
