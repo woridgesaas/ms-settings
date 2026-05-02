@@ -42,3 +42,18 @@ recruitment-site:
     max-size-mb: 2
     allowed-content-types: image/png,image/jpeg,image/webp,image/svg+xml
     allowed-extensions: .png,.jpg,.jpeg,.webp,.svg
+
+rabbitmq:
+  exchange:
+    notification: woridge.exchange
+  routing:
+    tenant-ready: tenant.ready.mms-settings
+  queue:
+    provisioning: q.settings.provisioning
+
+tenant:
+  database:
+    host: woridge.db.settings
+    port: ${POSTGRES_PORT}
+    username: ${POSTGRES_USER}
+    password: ${DB_PASSWORD}
