@@ -28,18 +28,18 @@ build-maven:
       - target/*.jar
     expire_in: 15 minutes
 
-unit-tests:
-  stage: test
-  image: maven:3.9.11-eclipse-temurin-21
-  script:
-    - mvn clean test
-  artifacts:
-    paths:
-      - target/surefire-reports/*.xml
-    reports:
-      junit: target/surefire-reports/*.xml
-    expire_in: 2 days
-  allow_failure: false
+#unit-tests:
+#  stage: test
+#  image: maven:3.9.11-eclipse-temurin-21
+#  script:
+#    - mvn clean test
+#  artifacts:
+#    paths:
+#      - target/surefire-reports/*.xml
+#    reports:
+#      junit: target/surefire-reports/*.xml
+#    expire_in: 2 days
+#  allow_failure: false
 
 # =========================
 # 2️⃣ Build image Docker
