@@ -38,7 +38,7 @@ services:
       - .env
     image: ms-settings:latest
     ports:
-      - "${SERVER_PORT}:8080"
+      - "${HOST_PORT}:8080"
     environment:
       #SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: ${DB_URL}
