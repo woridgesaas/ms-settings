@@ -40,8 +40,8 @@ services:
     ports:
       - "${SERVER_PORT}:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://woridge.settings.db:5432/${POSTGRES_DB}
+      #SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: ${DB_URL}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
@@ -51,6 +51,7 @@ services:
 
     networks:
       - woridge-external-network
+      - shared-infra-net
 
 
 # =========================
@@ -69,3 +70,6 @@ networks:
 
   provisioning-service-network:
     external: true
+  shared-infra-net:
+    external: true
+    name: shared-infra-net
