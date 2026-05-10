@@ -39,7 +39,7 @@ public class RabbitMQConfig {
     @Bean
     public TopicExchange woridgeExchange(){
         return ExchangeBuilder
-                .topicExchange(this.properties.getExchangeNotification())
+                .topicExchange(this.properties.getExchange().getNotification())
                 .durable(true)
                 .build();
 

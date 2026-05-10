@@ -7,7 +7,7 @@ spring:
     hibernate:
       ddl-auto: validate
   profiles:
-    active: ${ACTIVE_PROFILE:dev}
+    active: ${ACTIVE_PROFILE}
   servlet:
     multipart:
       max-file-size: ${MAX_FILE_SIZE}

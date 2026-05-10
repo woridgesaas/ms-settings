@@ -1,12 +1,8 @@
-version: "3.9"
-
 services:
-  # =========================
-  # Base de données PostgreSQL
-  # =========================
+  # Database
   woridge.db.settings:
     image: postgres:16
-    container_name: db-settings
+    container_name: "settings_management"
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -26,11 +22,9 @@ services:
       - provisioning-service-network
 
 
-  # =========================
-  # Micro-service Settings
-  # =========================
+  # Backend
   ms-settings:
-    container_name: woridge-ms-settings
+    container_name: "woridge-ms-settings"
     build:
       context: .
       dockerfile: infra/Dockerfile
@@ -40,12 +34,12 @@ services:
     ports:
       - "${HOST_PORT}:8080"
     environment:
-      #SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: ${DB_URL}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
-      - woridge.db.settings
+      woridge.db.settings:
+        condition: service_healthy
 
     restart: unless-stopped
 
@@ -53,17 +47,11 @@ services:
       - woridge-external-network
       - shared-infra-net
 
-
-# =========================
 # Volumes
-# =========================
 volumes:
   settings-db-data:
 
-
-# =========================
 # Networks
-# =========================
 networks:
   woridge-external-network:
     external: true
